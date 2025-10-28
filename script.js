@@ -3,6 +3,9 @@ const celestialObjects = [
     // Sun
     { id: 'Sun', name: 'Sun', traditionalName: '', type: 'star', filename: 'Sun.jpg' },
     
+    // Moon
+    { id: 'Moon', name: 'Moon', traditionalName: '', type: 'moon', filename: 'Moon.jpg' },
+    
     // Planets
     { id: 'Mercury', name: 'Mercury', traditionalName: '', type: 'planet', filename: 'Mercury.jpg' },
     { id: 'Venus', name: 'Venus', traditionalName: '', type: 'planet', filename: 'Venus.jpg' },
@@ -134,6 +137,12 @@ const modalImage = document.getElementById('modalImage');
 const modalTitle = document.getElementById('modalTitle');
 const modalDescription = document.getElementById('modalDescription');
 const closeModal = document.getElementById('closeModal');
+const prevImageBtn = document.getElementById('prevImage');
+const nextImageBtn = document.getElementById('nextImage');
+
+// Navigation state
+let currentImageIndex = 0;
+let availableImages = [];
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -206,6 +215,10 @@ function setupModalEvents() {
     // Close modal when clicking the X
     closeModal.addEventListener('click', closeModalWindow);
     
+    // Navigation buttons
+    prevImageBtn.addEventListener('click', showPreviousImage);
+    nextImageBtn.addEventListener('click', showNextImage);
+    
     // Close modal when clicking outside the image
     imageModal.addEventListener('click', function(e) {
         if (e.target === imageModal) {
@@ -213,20 +226,37 @@ function setupModalEvents() {
         }
     });
     
-    // Close modal with Escape key
+    // Keyboard navigation
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && imageModal.style.display === 'block') {
-            closeModalWindow();
+        if (imageModal.style.display === 'block') {
+            switch(e.key) {
+                case 'Escape':
+                    closeModalWindow();
+                    break;
+                case 'ArrowLeft':
+                    showPreviousImage();
+                    break;
+                case 'ArrowRight':
+                    showNextImage();
+                    break;
+            }
         }
     });
 }
 
 // Open modal with image
 function openModal(obj, imagePath) {
-    modalImage.src = imagePath;
-    modalImage.alt = obj.name;
-    modalTitle.textContent = obj.name;
-    modalDescription.textContent = obj.traditionalName || '';
+    // Build list of available images (only those that exist)
+    buildAvailableImagesList();
+    
+    // Find current image index
+    currentImageIndex = availableImages.findIndex(item => item.id === obj.id);
+    
+    // Update modal content
+    updateModalContent(obj, imagePath);
+    
+    // Update navigation buttons
+    updateNavigationButtons();
     
     imageModal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
@@ -236,6 +266,59 @@ function openModal(obj, imagePath) {
 function closeModalWindow() {
     imageModal.style.display = 'none';
     document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Build list of available images (only those that exist)
+function buildAvailableImagesList() {
+    availableImages = [];
+    
+    celestialObjects.forEach(obj => {
+        const imagePath = `images/${obj.filename}`;
+        // Check if image exists by looking for grid items with this object ID that are clickable
+        const gridItem = document.querySelector(`[data-object-id="${obj.id}"]`);
+        if (gridItem && gridItem.classList.contains('clickable')) {
+            availableImages.push({
+                id: obj.id,
+                name: obj.name,
+                traditionalName: obj.traditionalName,
+                imagePath: imagePath
+            });
+        }
+    });
+}
+
+// Update modal content
+function updateModalContent(obj, imagePath) {
+    modalImage.src = imagePath;
+    modalImage.alt = obj.name;
+    modalTitle.textContent = obj.name;
+    modalDescription.textContent = obj.traditionalName || '';
+}
+
+// Update navigation buttons state
+function updateNavigationButtons() {
+    prevImageBtn.disabled = currentImageIndex === 0;
+    nextImageBtn.disabled = currentImageIndex === availableImages.length - 1;
+}
+
+// Show previous image
+function showPreviousImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        const currentObj = availableImages[currentImageIndex];
+        updateModalContent(currentObj, currentObj.imagePath);
+        updateNavigationButtons();
+    }
+}
+
+// Show next image
+function showNextImage() {
+    if (currentImageIndex < availableImages.length - 1) {
+        currentImageIndex++;
+        const currentObj = availableImages[currentImageIndex];
+        updateModalContent(currentObj, currentObj.imagePath);
+        updateNavigationButtons();
+    }
 }
 
 // Utility function to check if an image exists

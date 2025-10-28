@@ -4,7 +4,7 @@ A beautiful, responsive website showcasing celestial objects from our night sky.
 
 ## Features
 
-- **119 Celestial Objects**: Displays all 110 Messier objects, 8 planets, and the Sun
+- **120 Celestial Objects**: Displays all 110 Messier objects, 8 planets, the Sun, and the Moon
 - **Responsive Grid Layout**: Automatically adapts to different screen sizes
 - **Interactive Modal**: Click on any available image to view it in full size
 - **Smart Placeholder System**: Shows a placeholder for missing images
@@ -27,6 +27,7 @@ A beautiful, responsive website showcasing celestial objects from our night sky.
    - **Messier Objects**: `M1.jpg`, `M2.jpg`, `M3.jpg`, etc. (up to M110)
    - **Planets**: `Mercury.jpg`, `Venus.jpg`, `Earth.jpg`, `Mars.jpg`, `Jupiter.jpg`, `Saturn.jpg`, `Uranus.jpg`, `Neptune.jpg`
    - **Sun**: `Sun.jpg`
+   - **Moon**: `Moon.jpg`
 
 2. **View the Website**: Open `index.html` in your web browser
 
